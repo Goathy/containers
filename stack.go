@@ -16,13 +16,13 @@ var (
 
 type node[Value any] struct {
 	value Value
-	next  *node[Value]
+	prev  *node[Value]
 }
 
 type stack[Value any] struct {
-	size        int64
-	currentSize int64
-	head        *node[Value]
+	size   int64
+	length int64
+	top    *node[Value]
 }
 
 func New[Value any](size int64) (*stack[Value], error) {
@@ -40,11 +40,11 @@ func (s *stack[Value]) IsFull() bool {
 	if s.size == -1 {
 		return false
 	}
-	return s.currentSize == s.size
+	return s.length == s.size
 }
 
 func (s *stack[Value]) IsEmpty() bool {
-	return s.head == nil
+	return s.top == nil
 }
 
 func (s *stack[Value]) Push(element Value) error {
@@ -53,13 +53,13 @@ func (s *stack[Value]) Push(element Value) error {
 	}
 
 	if s.IsEmpty() {
-		s.head = &node[Value]{element, nil}
-		s.currentSize++
+		s.top = &node[Value]{element, nil}
+		s.length++
 		return nil
 	}
 
-	s.head = &node[Value]{element, s.head}
-	s.currentSize++
+	s.top = &node[Value]{element, s.top}
+	s.length++
 
 	return nil
 }
@@ -70,9 +70,9 @@ func (s *stack[Value]) Pop() (Value, error) {
 		return *new(Value), errStackEmpty
 	}
 
-	curr := s.head
-	s.head = curr.next
-	s.currentSize--
+	n := s.top
+	s.top = n.prev
+	s.length--
 
-	return curr.value, nil
+	return n.value, nil
 }
