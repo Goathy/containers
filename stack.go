@@ -29,10 +29,10 @@ func New[Value any](size int64) (*stack[Value], error) {
 	switch {
 	case size == -1:
 		return &stack[Value]{-1, 0, nil}, nil
-	case size < 0:
-		return nil, errStackSize
-	default:
+	case size >= 0:
 		return &stack[Value]{size, 0, nil}, nil
+	default:
+		return nil, errStackSize
 	}
 }
 
