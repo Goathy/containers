@@ -2,6 +2,7 @@ package stack_test
 
 import (
 	"errors"
+	"reflect"
 	"testing"
 
 	"github.com/Goathy/stack"
@@ -9,7 +10,7 @@ import (
 
 func TestStack(t *testing.T) {
 	t.Run("should create stack instance", func(t *testing.T) {
-		stack, err := stack.New(0)
+		stack, err := stack.New[int64](0)
 
 		assertBool(t, err != nil, "unexpected error")
 
@@ -17,7 +18,7 @@ func TestStack(t *testing.T) {
 	})
 
 	t.Run("should create stack without size limit", func(t *testing.T) {
-		stack, err := stack.New(-1)
+		stack, err := stack.New[int64](-1)
 
 		assertBool(t, err != nil, "unexpected error")
 
@@ -31,7 +32,7 @@ func TestStack(t *testing.T) {
 	})
 
 	t.Run("should not create stack with size less then -1", func(t *testing.T) {
-		stack, err := stack.New(-2)
+		stack, err := stack.New[int64](-2)
 
 		want := errors.New("negative stack size")
 
@@ -41,7 +42,7 @@ func TestStack(t *testing.T) {
 	})
 
 	t.Run("stack should be full", func(t *testing.T) {
-		stack, err := stack.New(5)
+		stack, err := stack.New[int64](5)
 
 		assertBool(t, err != nil, "unexpected error")
 
@@ -55,7 +56,7 @@ func TestStack(t *testing.T) {
 	})
 
 	t.Run("should return error if provide more values then stack limit", func(t *testing.T) {
-		stack, err := stack.New(5)
+		stack, err := stack.New[int64](5)
 
 		assertBool(t, err != nil, "unexpected error")
 
@@ -73,7 +74,7 @@ func TestStack(t *testing.T) {
 	})
 
 	t.Run("should return error if pop more values then stack store", func(t *testing.T) {
-		stack, err := stack.New(0)
+		stack, err := stack.New[int64](0)
 
 		assertBool(t, err != nil, "unexpected error")
 
@@ -85,14 +86,16 @@ func TestStack(t *testing.T) {
 	})
 
 	t.Run("stack should pop values in reverso order to push", func(t *testing.T) {
-		stack, err := stack.New(5)
+		stack, err := stack.New[int64](5)
 
 		assertBool(t, err != nil, "unexpected error")
 
 		elements := []int64{1, 2, 3, 4, 5}
 
 		for _, el := range elements {
-			stack.Push(el)
+			err := stack.Push(el)
+
+			assertBool(t, err != nil, "unexpected error")
 		}
 
 		assertBool(t, !stack.IsFull(), "stack should be full")
@@ -102,13 +105,60 @@ func TestStack(t *testing.T) {
 
 			assertBool(t, err != nil, "unexpected error")
 
-			if el != elements[i] {
-				t.Errorf("want %q, got %q", elements[i], el)
-			}
+			assertValues(t, el, elements[i])
 		}
 
 		assertBool(t, !stack.IsEmpty(), "stackshould be empty")
 	})
+}
+
+func TestStackWithStrings(t *testing.T) {
+	elements := []string{"foo", "bar", "baz"}
+
+	stack, err := stack.New[string](3)
+
+	assertBool(t, err != nil, "unexpected error")
+
+	for _, el := range elements {
+		stack.Push(el)
+	}
+
+	assertBool(t, !stack.IsFull(), "stack should be full")
+
+	for i := len(elements) - 1; i >= 0; i-- {
+		el, err := stack.Pop()
+
+		assertBool(t, err != nil, "unexpected error")
+
+		assertValues(t, el, elements[i])
+	}
+}
+
+func TestStackWithStruct(t *testing.T) {
+	type TestStruct struct {
+		description string
+		value       int
+	}
+
+	elements := []TestStruct{{"foo", 10}, {"bar", 20}, {"baz", 30}}
+
+	stack, err := stack.New[TestStruct](3)
+
+	assertBool(t, err != nil, "unexpected error")
+
+	for _, el := range elements {
+		stack.Push(el)
+	}
+
+	assertBool(t, !stack.IsFull(), "stack should be full")
+
+	for i := len(elements) - 1; i >= 0; i-- {
+		el, err := stack.Pop()
+
+		assertBool(t, err != nil, "unexpected error")
+
+		assertValues(t, el, elements[i])
+	}
 }
 
 func assertError(t testing.TB, want, got error) {
@@ -123,5 +173,13 @@ func assertBool(t testing.TB, got bool, msg string) {
 	t.Helper()
 	if got {
 		t.Error(msg)
+	}
+}
+
+func assertValues(t testing.TB, got any, want any) {
+	t.Helper()
+
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want %q, got %q", want, got)
 	}
 }

@@ -14,59 +14,60 @@ var (
 	errStackSize     = errors.New(negativeStackSize)
 )
 
-type node struct {
-	value int64
-	next  *node
+type node[Value any] struct {
+	value Value
+	next  *node[Value]
 }
 
-type stack struct {
+type stack[Value any] struct {
 	size        int64
 	currentSize int64
-	head        *node
+	head        *node[Value]
 }
 
-func New(size int64) (*stack, error) {
+func New[Value any](size int64) (*stack[Value], error) {
 	switch {
 	case size == -1:
-		return &stack{-1, 0, nil}, nil
+		return &stack[Value]{-1, 0, nil}, nil
 	case size < 0:
 		return nil, errStackSize
 	default:
-		return &stack{size, 0, nil}, nil
+		return &stack[Value]{size, 0, nil}, nil
 	}
 }
 
-func (s *stack) IsFull() bool {
+func (s *stack[Value]) IsFull() bool {
 	if s.size == -1 {
 		return false
 	}
 	return s.currentSize == s.size
 }
 
-func (s *stack) IsEmpty() bool {
+func (s *stack[Value]) IsEmpty() bool {
 	return s.head == nil
 }
 
-func (s *stack) Push(element int64) error {
+func (s *stack[Value]) Push(element Value) error {
 	if s.IsFull() {
 		return errStackOverflow
 	}
 
 	if s.IsEmpty() {
-		s.head = &node{element, nil}
+		s.head = &node[Value]{element, nil}
 		s.currentSize++
 		return nil
 	}
 
-	s.head = &node{element, s.head}
+	s.head = &node[Value]{element, s.head}
 	s.currentSize++
 
 	return nil
 }
 
-func (s *stack) Pop() (int64, error) {
+func (s *stack[Value]) Pop() (Value, error) {
 	if s.IsEmpty() {
-		return 0, errStackEmpty
+		// *new(Value) create zero value of provided type, equivalent to e.g. var zero Value
+		return *new(Value), errStackEmpty
 	}
 
 	curr := s.head
