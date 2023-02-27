@@ -76,3 +76,11 @@ func (s *stack[Value]) Pop() (Value, error) {
 
 	return n.value, nil
 }
+
+func (s *stack[Value]) Peek() (Value, error) {
+	if s.IsEmpty() {
+		return *new(Value), errStackEmpty
+	}
+
+	return s.top.value, nil
+}
