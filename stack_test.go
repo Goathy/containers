@@ -111,6 +111,43 @@ func TestStack(t *testing.T) {
 			assertValue(t, el, elements[i])
 		}
 	})
+
+	t.Run("peek should display value without popping value from stack", func(t *testing.T) {
+		stack, err := stack.New[float32](1)
+
+		assertBool(t, err != nil, "unexpected error")
+
+		stack.Push(6.32)
+
+		assertBool(t, !stack.IsFull(), "stack should be full")
+
+		got, err := stack.Peek()
+
+		want := float32(6.32)
+
+		assertValue(t, got, want)
+
+		assertBool(t, err != nil, "unexpected error")
+
+		assertBool(t, !stack.IsFull(), "stack should be full")
+
+	})
+
+	t.Run("peek on empty stack should return error", func(t *testing.T) {
+		stack, err := stack.New[float32](0)
+
+		assertBool(t, err != nil, "unexpected error")
+
+		assertBool(t, !stack.IsFull(), "stack should be full")
+
+		_, err = stack.Peek()
+
+		want := errors.New("stack empty")
+
+		assertError(t, want, err)
+
+		assertBool(t, !stack.IsFull(), "stack should be full")
+	})
 }
 
 func assertError(t testing.TB, want, got error) {
