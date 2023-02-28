@@ -1,17 +1,15 @@
 package stack
 
-import "errors"
-
-const (
-	stackOverflow     = "stack overflow"
-	stackEmpty        = "stack empty"
-	negativeStackSize = "negative stack size"
+import (
+	"errors"
 )
 
 var (
-	errStackOverflow = errors.New(stackOverflow)
-	errStackEmpty    = errors.New(stackEmpty)
-	errStackSize     = errors.New(negativeStackSize)
+	ErrorOverflow = errors.New("stack overflow")
+	// EOS error is returned when Pop() or Peek() method are called
+	// on empty stack
+	EOS             = errors.New("EOS")
+	ErrNegativeSize = errors.New("negative stack size")
 )
 
 type node[Value any] struct {
@@ -32,7 +30,7 @@ func New[Value any](size int64) (*stack[Value], error) {
 	case size >= 0:
 		return &stack[Value]{size, 0, nil}, nil
 	default:
-		return nil, errStackSize
+		return nil, ErrNegativeSize
 	}
 }
 
@@ -49,7 +47,7 @@ func (s *stack[Value]) IsEmpty() bool {
 
 func (s *stack[Value]) Push(element Value) error {
 	if s.IsFull() {
-		return errStackOverflow
+		return ErrorOverflow
 	}
 
 	if s.IsEmpty() {
@@ -67,7 +65,7 @@ func (s *stack[Value]) Push(element Value) error {
 func (s *stack[Value]) Pop() (Value, error) {
 	if s.IsEmpty() {
 		// *new(Value) create zero value of provided type, equivalent to e.g. var zero Value
-		return *new(Value), errStackEmpty
+		return *new(Value), EOS
 	}
 
 	n := s.top
@@ -79,7 +77,7 @@ func (s *stack[Value]) Pop() (Value, error) {
 
 func (s *stack[Value]) Peek() (Value, error) {
 	if s.IsEmpty() {
-		return *new(Value), errStackEmpty
+		return *new(Value), EOS
 	}
 
 	return s.top.value, nil
