@@ -5,9 +5,9 @@ import (
 )
 
 var (
-	ErrStackOverflow = errors.New("stack overflow")
-	ErrStackEmpty    = errors.New("stack empty")
-	ErrStackSize     = errors.New("negative stack size")
+	ErrStackOverflow     = errors.New("stack overflow")
+	ErrStackEmpty        = errors.New("stack empty")
+	ErrNegativeStackSize = errors.New("negative stack size")
 )
 
 type node[Value any] struct {
@@ -28,7 +28,7 @@ func New[Value any](size int64) (*stack[Value], error) {
 	case size >= 0:
 		return &stack[Value]{size, 0, nil}, nil
 	default:
-		return nil, ErrStackSize
+		return nil, ErrNegativeStackSize
 	}
 }
 
