@@ -74,15 +74,13 @@ func TestStack(t *testing.T) {
 	})
 
 	t.Run("should return error if pop more values then stack store", func(t *testing.T) {
-		stack, err := stack.New[complex128](0)
+		s, err := stack.New[complex128](0)
 
 		assertBool(t, err != nil, "unexpected error")
 
-		_, err = stack.Pop()
+		_, err = s.Pop()
 
-		want := errors.New("stack empty")
-
-		assertError(t, want, err)
+		assertError(t, stack.EOS, err)
 	})
 
 	t.Run("stack should pop values in revers order to push", func(t *testing.T) {
@@ -134,19 +132,17 @@ func TestStack(t *testing.T) {
 	})
 
 	t.Run("peek on empty stack should return error", func(t *testing.T) {
-		stack, err := stack.New[float32](0)
+		s, err := stack.New[float32](0)
 
 		assertBool(t, err != nil, "unexpected error")
 
-		assertBool(t, !stack.IsFull(), "stack should be full")
+		assertBool(t, !s.IsFull(), "stack should be full")
 
-		_, err = stack.Peek()
+		_, err = s.Peek()
 
-		want := errors.New("stack empty")
+		assertError(t, stack.EOS, err)
 
-		assertError(t, want, err)
-
-		assertBool(t, !stack.IsFull(), "stack should be full")
+		assertBool(t, !s.IsFull(), "stack should be full")
 	})
 }
 
