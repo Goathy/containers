@@ -6,7 +6,7 @@ import (
 
 var (
 	ErrStackOverflow     = errors.New("stack overflow")
-	ErrStackEmpty        = errors.New("stack empty")
+	ErrEmptyStack        = errors.New("empty stack")
 	ErrNegativeStackSize = errors.New("negative stack size")
 )
 
@@ -63,7 +63,7 @@ func (s *stack[Value]) Push(element Value) error {
 func (s *stack[Value]) Pop() (Value, error) {
 	if s.IsEmpty() {
 		// *new(Value) create zero value of provided type, equivalent to e.g. var zero Value
-		return *new(Value), ErrStackEmpty
+		return *new(Value), ErrEmptyStack
 	}
 
 	n := s.top
@@ -75,7 +75,7 @@ func (s *stack[Value]) Pop() (Value, error) {
 
 func (s *stack[Value]) Peek() (Value, error) {
 	if s.IsEmpty() {
-		return *new(Value), ErrStackEmpty
+		return *new(Value), ErrEmptyStack
 	}
 
 	return s.top.value, nil
