@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	ErrStackOverflow = errors.New("stack overflow")
+	ErrorOverflow = errors.New("stack overflow")
 	// EOS error is returned when Pop() or Peek() method are called
 	// on empty stack
 	EOS                  = errors.New("EOS")
@@ -47,7 +47,7 @@ func (s *stack[Value]) IsEmpty() bool {
 
 func (s *stack[Value]) Push(element Value) error {
 	if s.IsFull() {
-		return ErrStackOverflow
+		return ErrorOverflow
 	}
 
 	if s.IsEmpty() {
