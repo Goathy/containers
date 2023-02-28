@@ -68,9 +68,7 @@ func TestStack(t *testing.T) {
 
 		err = s.Push(6)
 
-		want := errors.New("stack overflow")
-
-		assertError(t, want, err)
+		assertError(t, stack.ErrStackOverflow, err)
 	})
 
 	t.Run("should return error if pop more values then stack store", func(t *testing.T) {
