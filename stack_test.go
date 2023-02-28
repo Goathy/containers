@@ -10,63 +10,63 @@ import (
 
 func TestStack(t *testing.T) {
 	t.Run("should create stack instance", func(t *testing.T) {
-		stack, err := stack.New[int64](0)
+		s, err := stack.New[int64](0)
 
 		assertBool(t, err != nil, "unexpected error")
 
-		assertBool(t, stack == nil, "stack should not be nil")
+		assertBool(t, s == nil, "stack should not be nil")
 	})
 
 	t.Run("should create stack without size limit", func(t *testing.T) {
-		stack, err := stack.New[float64](-1)
+		s, err := stack.New[float64](-1)
 
 		assertBool(t, err != nil, "unexpected error")
 
-		assertBool(t, !stack.IsEmpty(), "empty stack should be empty")
+		assertBool(t, !s.IsEmpty(), "empty stack should be empty")
 
 		for _, el := range []float64{1, 0.2, 00.3, 4.01, 5.4, 345.6, 7} {
-			stack.Push(el)
+			s.Push(el)
 		}
 
-		assertBool(t, stack.IsFull(), "stack with no size limit should not be full")
+		assertBool(t, s.IsFull(), "stack with no size limit should not be full")
 	})
 
 	t.Run("should not create stack with size less then -1", func(t *testing.T) {
-		stack, err := stack.New[string](-2)
+		s, err := stack.New[string](-2)
 
 		want := errors.New("negative stack size")
 
 		assertError(t, want, err)
 
-		assertBool(t, stack != nil, "stack should be nil")
+		assertBool(t, s != nil, "stack should be nil")
 	})
 
 	t.Run("stack should be full", func(t *testing.T) {
-		stack, err := stack.New[rune](5)
+		s, err := stack.New[rune](5)
 
 		assertBool(t, err != nil, "unexpected error")
 
-		assertBool(t, !stack.IsEmpty(), "stack should be empty")
+		assertBool(t, !s.IsEmpty(), "stack should be empty")
 
 		for _, el := range []rune{'a', 'b', 'c', 'd', 'e'} {
-			stack.Push(el)
+			s.Push(el)
 		}
 
-		assertBool(t, !stack.IsFull(), "stack should be full")
+		assertBool(t, !s.IsFull(), "stack should be full")
 	})
 
 	t.Run("should return error if provide more values then stack limit", func(t *testing.T) {
-		stack, err := stack.New[int](5)
+		s, err := stack.New[int](5)
 
 		assertBool(t, err != nil, "unexpected error")
 
 		for _, el := range []int{1, 2, 3, 4, 5} {
-			err := stack.Push(el)
+			err := s.Push(el)
 
 			assertBool(t, err != nil, "unexpected error")
 		}
 
-		err = stack.Push(6)
+		err = s.Push(6)
 
 		want := errors.New("stack overflow")
 
@@ -91,18 +91,18 @@ func TestStack(t *testing.T) {
 
 		elements := []TestStruct{{"foo", 10}, {"bar", 20}, {"baz", 30}}
 
-		stack, err := stack.New[TestStruct](3)
+		s, err := stack.New[TestStruct](3)
 
 		assertBool(t, err != nil, "unexpected error")
 
 		for _, el := range elements {
-			stack.Push(el)
+			s.Push(el)
 		}
 
-		assertBool(t, !stack.IsFull(), "stack should be full")
+		assertBool(t, !s.IsFull(), "stack should be full")
 
 		for i := len(elements) - 1; i >= 0; i-- {
-			el, err := stack.Pop()
+			el, err := s.Pop()
 
 			assertBool(t, err != nil, "unexpected error")
 
@@ -111,15 +111,15 @@ func TestStack(t *testing.T) {
 	})
 
 	t.Run("peek should display value without popping value from stack", func(t *testing.T) {
-		stack, err := stack.New[float32](1)
+		s, err := stack.New[float32](1)
 
 		assertBool(t, err != nil, "unexpected error")
 
-		stack.Push(6.32)
+		s.Push(6.32)
 
-		assertBool(t, !stack.IsFull(), "stack should be full")
+		assertBool(t, !s.IsFull(), "stack should be full")
 
-		got, err := stack.Peek()
+		got, err := s.Peek()
 
 		want := float32(6.32)
 
@@ -127,7 +127,7 @@ func TestStack(t *testing.T) {
 
 		assertBool(t, err != nil, "unexpected error")
 
-		assertBool(t, !stack.IsFull(), "stack should be full")
+		assertBool(t, !s.IsFull(), "stack should be full")
 
 	})
 
