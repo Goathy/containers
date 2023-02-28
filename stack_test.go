@@ -1,7 +1,6 @@
 package stack_test
 
 import (
-	"errors"
 	"reflect"
 	"testing"
 
@@ -34,9 +33,7 @@ func TestStack(t *testing.T) {
 	t.Run("should not create stack with size less then -1", func(t *testing.T) {
 		s, err := stack.New[string](-2)
 
-		want := errors.New("negative stack size")
-
-		assertError(t, want, err)
+		assertError(t, stack.ErrNegativeStackSize, err)
 
 		assertBool(t, s != nil, "stack should be nil")
 	})
