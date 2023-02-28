@@ -33,7 +33,7 @@ func TestStack(t *testing.T) {
 	t.Run("should not create stack with size less then -1", func(t *testing.T) {
 		s, err := stack.New[string](-2)
 
-		assertError(t, stack.ErrNegativeStackSize, err)
+		assertError(t, stack.ErrNegativeSize, err)
 
 		assertBool(t, s != nil, "stack should be nil")
 	})

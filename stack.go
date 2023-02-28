@@ -8,8 +8,8 @@ var (
 	ErrorOverflow = errors.New("stack overflow")
 	// EOS error is returned when Pop() or Peek() method are called
 	// on empty stack
-	EOS                  = errors.New("EOS")
-	ErrNegativeStackSize = errors.New("negative stack size")
+	EOS             = errors.New("EOS")
+	ErrNegativeSize = errors.New("negative stack size")
 )
 
 type node[Value any] struct {
@@ -30,7 +30,7 @@ func New[Value any](size int64) (*stack[Value], error) {
 	case size >= 0:
 		return &stack[Value]{size, 0, nil}, nil
 	default:
-		return nil, ErrNegativeStackSize
+		return nil, ErrNegativeSize
 	}
 }
 
