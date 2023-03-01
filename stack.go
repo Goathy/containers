@@ -24,14 +24,10 @@ type stack[Value any] struct {
 }
 
 func New[Value any](size int64) (*stack[Value], error) {
-	switch {
-	case size == -1:
-		return &stack[Value]{-1, 0, nil}, nil
-	case size >= 0:
+	if size == -1 || size >= 0 {
 		return &stack[Value]{size, 0, nil}, nil
-	default:
-		return nil, ErrNegativeSize
 	}
+	return nil, ErrNegativeSize
 }
 
 func (s *stack[Value]) IsFull() bool {
