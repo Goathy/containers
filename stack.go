@@ -41,18 +41,18 @@ func (s *stack[V]) IsEmpty() bool {
 	return s.top == nil
 }
 
-func (s *stack[V]) Push(element V) error {
+func (s *stack[V]) Push(v V) error {
 	if s.IsFull() {
 		return ErrorOverflow
 	}
 
 	if s.IsEmpty() {
-		s.top = &node[V]{element, nil}
+		s.top = &node[V]{v, nil}
 		s.length++
 		return nil
 	}
 
-	s.top = &node[V]{element, s.top}
+	s.top = &node[V]{v, s.top}
 	s.length++
 
 	return nil
