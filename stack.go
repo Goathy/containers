@@ -12,60 +12,56 @@ var (
 	ErrNegativeSize = errors.New("negative stack size")
 )
 
-type node[Value any] struct {
-	value Value
-	prev  *node[Value]
+type node[V any] struct {
+	value V
+	prev  *node[V]
 }
 
-type stack[Value any] struct {
+type stack[V any] struct {
 	size   int64
 	length int64
-	top    *node[Value]
+	top    *node[V]
 }
 
-func New[Value any](size int64) (*stack[Value], error) {
-	switch {
-	case size == -1:
-		return &stack[Value]{-1, 0, nil}, nil
-	case size >= 0:
-		return &stack[Value]{size, 0, nil}, nil
-	default:
-		return nil, ErrNegativeSize
+func New[V any](size int64) (*stack[V], error) {
+	if size == -1 || size >= 0 {
+		return &stack[V]{size: size, length: 0, top: nil}, nil
 	}
+	return nil, ErrNegativeSize
 }
 
-func (s *stack[Value]) IsFull() bool {
+func (s *stack[V]) IsFull() bool {
 	if s.size == -1 {
 		return false
 	}
 	return s.length == s.size
 }
 
-func (s *stack[Value]) IsEmpty() bool {
+func (s *stack[V]) IsEmpty() bool {
 	return s.top == nil
 }
 
-func (s *stack[Value]) Push(element Value) error {
+func (s *stack[V]) Push(v V) error {
 	if s.IsFull() {
 		return ErrorOverflow
 	}
 
 	if s.IsEmpty() {
-		s.top = &node[Value]{element, nil}
+		s.top = &node[V]{value: v, prev: nil}
 		s.length++
 		return nil
 	}
 
-	s.top = &node[Value]{element, s.top}
+	s.top = &node[V]{value: v, prev: s.top}
 	s.length++
 
 	return nil
 }
 
-func (s *stack[Value]) Pop() (Value, error) {
+func (s *stack[V]) Pop() (V, error) {
 	if s.IsEmpty() {
-		// *new(Value) create zero value of provided type, equivalent to e.g. var zero Value
-		return *new(Value), EOS
+		// *new(V) create zero value of provided type, equivalent to e.g. var zero Value
+		return *new(V), EOS
 	}
 
 	n := s.top
@@ -75,9 +71,9 @@ func (s *stack[Value]) Pop() (Value, error) {
 	return n.value, nil
 }
 
-func (s *stack[Value]) Peek() (Value, error) {
+func (s *stack[V]) Peek() (V, error) {
 	if s.IsEmpty() {
-		return *new(Value), EOS
+		return *new(V), EOS
 	}
 
 	return s.top.value, nil
