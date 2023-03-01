@@ -25,7 +25,7 @@ type stack[V any] struct {
 
 func New[V any](size int64) (*stack[V], error) {
 	if size == -1 || size >= 0 {
-		return &stack[V]{size, 0, nil}, nil
+		return &stack[V]{size: size, length: 0, top: nil}, nil
 	}
 	return nil, ErrNegativeSize
 }
@@ -47,12 +47,12 @@ func (s *stack[V]) Push(v V) error {
 	}
 
 	if s.IsEmpty() {
-		s.top = &node[V]{v, nil}
+		s.top = &node[V]{value: v, prev: nil}
 		s.length++
 		return nil
 	}
 
-	s.top = &node[V]{v, s.top}
+	s.top = &node[V]{value: v, prev: s.top}
 	s.length++
 
 	return nil
