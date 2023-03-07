@@ -37,9 +37,9 @@ func TestQueue(t *testing.T) {
 		got := make([]string, 0)
 
 		for {
-			v := q.Dequeue()
+			v, err := q.Dequeue()
 
-			if v == "" {
+			if err == queue.EOQ {
 				break
 			}
 
@@ -76,6 +76,22 @@ func TestQueue(t *testing.T) {
 
 			assertBool(t, q.IsEmpty() != tc.want, fmt.Sprintf("want %t, got %t", tc.want, q.IsEmpty()))
 		})
+	}
+
+	t.Run("should return error if dequeue from empty queue", func(t *testing.T) {
+		q := queue.New[float32]()
+
+		_, err := q.Dequeue()
+
+		assertError(t, queue.EOQ, err)
+	})
+}
+
+func assertError(t testing.TB, want, got error) {
+	t.Helper()
+
+	if want.Error() != got.Error() {
+		t.Errorf("want %q, got %q", want, got)
 	}
 }
 

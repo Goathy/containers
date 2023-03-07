@@ -1,5 +1,11 @@
 package queue
 
+import "errors"
+
+var (
+	EOQ = errors.New("end of queue")
+)
+
 type node[V any] struct {
 	value V
 	next  *node[V]
@@ -25,9 +31,9 @@ func (q *queue[V]) Enqueue(v V) {
 	q.back = q.back.next
 }
 
-func (q *queue[V]) Dequeue() V {
+func (q *queue[V]) Dequeue() (V, error) {
 	if q.front == nil {
-		return *new(V)
+		return *new(V), EOQ
 	}
 
 	value := q.front.value
@@ -37,7 +43,7 @@ func (q *queue[V]) Dequeue() V {
 		q.back = nil
 	}
 
-	return value
+	return value, nil
 }
 
 func (q *queue[V]) IsEmpty() bool {
