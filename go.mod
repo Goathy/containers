@@ -1,3 +1,3 @@
-module github.com/Goathy/stack
+module github.com/Goathy/containers
 
 go 1.20

@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/Goathy/stack"
+	"github.com/Goathy/containers/stack"
 )
 
 func TestStack(t *testing.T) {
