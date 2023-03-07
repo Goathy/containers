@@ -48,6 +48,35 @@ func TestQueue(t *testing.T) {
 
 		assertBool(t, !reflect.DeepEqual(got, input), fmt.Sprintf("want %q, got %q", input, got))
 	})
+
+	tt := []struct {
+		desc  string
+		input []string
+		want  bool
+	}{
+		{
+			desc:  "queue should be empty",
+			input: []string{},
+			want:  true,
+		},
+		{
+			desc:  "queue should not be empty",
+			input: []string{"a", "b"},
+			want:  false,
+		},
+	}
+
+	for _, tc := range tt {
+		t.Run(tc.desc, func(t *testing.T) {
+			q := queue.New[string]()
+
+			for _, in := range tc.input {
+				q.Enqueue(in)
+			}
+
+			assertBool(t, q.IsEmpty() != tc.want, fmt.Sprintf("want %t, got %t", tc.want, q.IsEmpty()))
+		})
+	}
 }
 
 func assertBool(t testing.TB, got bool, msg string) {

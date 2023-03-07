@@ -39,3 +39,7 @@ func (q *queue[V]) Dequeue() V {
 
 	return value
 }
+
+func (q *queue[V]) IsEmpty() bool {
+	return q.front == nil
+}
