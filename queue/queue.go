@@ -33,5 +33,9 @@ func (q *queue[V]) Dequeue() V {
 	value := q.front.value
 	q.front = q.front.next
 
+	if q.front == nil {
+		q.back = nil
+	}
+
 	return value
 }
