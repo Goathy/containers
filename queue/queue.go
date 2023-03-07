@@ -3,7 +3,9 @@ package queue
 import "errors"
 
 var (
-	EOQ = errors.New("end of queue")
+	ErrOverflow     = errors.New("queue overflow")
+	EOQ             = errors.New("end of queue")
+	ErrNegativeSize = errors.New("negative queue size")
 )
 
 type node[V any] struct {
@@ -18,20 +20,31 @@ type queue[V any] struct {
 	size   int64
 }
 
-func New[V any](size int64) *queue[V] {
-	return &queue[V]{length: 0, size: size}
+func New[V any](size int64) (*queue[V], error) {
+	switch {
+	case size >= -1:
+		return &queue[V]{length: 0, size: size, front: nil, back: nil}, nil
+	default:
+		return nil, ErrNegativeSize
+	}
 }
 
-func (q *queue[V]) Enqueue(v V) {
-	defer func() { q.length++ }()
+func (q *queue[V]) Enqueue(v V) error {
+	if q.length == q.size {
+		return ErrOverflow
+	}
+
 	if q.front == nil {
 		q.front = &node[V]{value: v, next: nil}
 		q.back = q.front
-		return
+		q.length++
+		return nil
 	}
 
 	q.back.next = &node[V]{value: v, next: nil}
 	q.back = q.back.next
+	q.length++
+	return nil
 }
 
 func (q *queue[V]) Dequeue() (V, error) {
