@@ -12,15 +12,18 @@ type node[V any] struct {
 }
 
 type queue[V any] struct {
-	front *node[V]
-	back  *node[V]
+	front  *node[V]
+	back   *node[V]
+	length int64
+	size   int64
 }
 
-func New[V any]() *queue[V] {
-	return &queue[V]{}
+func New[V any](size int64) *queue[V] {
+	return &queue[V]{length: 0, size: size}
 }
 
 func (q *queue[V]) Enqueue(v V) {
+	defer func() { q.length++ }()
 	if q.front == nil {
 		q.front = &node[V]{value: v, next: nil}
 		q.back = q.front
@@ -48,4 +51,8 @@ func (q *queue[V]) Dequeue() (V, error) {
 
 func (q *queue[V]) IsEmpty() bool {
 	return q.front == nil
+}
+
+func (q *queue[V]) IsFull() bool {
+	return q.length == q.size
 }

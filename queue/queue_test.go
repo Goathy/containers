@@ -10,13 +10,13 @@ import (
 
 func TestQueue(t *testing.T) {
 	t.Run("should create stack instance", func(t *testing.T) {
-		q := queue.New[any]()
+		q := queue.New[any](0)
 
 		assertBool(t, q == nil, "queue should not be nil")
 	})
 
 	t.Run("should insert items into queue", func(t *testing.T) {
-		q := queue.New[int]()
+		q := queue.New[int](5)
 
 		input := []int{1, 2, 3, 4, 5}
 
@@ -26,7 +26,7 @@ func TestQueue(t *testing.T) {
 	})
 
 	t.Run("should remove items from queue", func(t *testing.T) {
-		q := queue.New[string]()
+		q := queue.New[string](5)
 
 		input := []string{"a", "b", "c", "d", "e"}
 
@@ -49,6 +49,17 @@ func TestQueue(t *testing.T) {
 		assertBool(t, !reflect.DeepEqual(got, input), fmt.Sprintf("want %q, got %q", input, got))
 	})
 
+	t.Run("should return error if dequeue from empty queue", func(t *testing.T) {
+		q := queue.New[float32](10)
+
+		_, err := q.Dequeue()
+
+		assertError(t, queue.EOQ, err)
+	})
+
+}
+
+func TestIsEmpty(t *testing.T) {
 	tt := []struct {
 		desc  string
 		input []string
@@ -68,7 +79,7 @@ func TestQueue(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.desc, func(t *testing.T) {
-			q := queue.New[string]()
+			q := queue.New[string](3)
 
 			for _, in := range tc.input {
 				q.Enqueue(in)
@@ -77,14 +88,40 @@ func TestQueue(t *testing.T) {
 			assertBool(t, q.IsEmpty() != tc.want, fmt.Sprintf("want %t, got %t", tc.want, q.IsEmpty()))
 		})
 	}
+}
 
-	t.Run("should return error if dequeue from empty queue", func(t *testing.T) {
-		q := queue.New[float32]()
+func TestIsFull(t *testing.T) {
+	tt := []struct {
+		desc  string
+		input []rune
+		size  int64
+		want  bool
+	}{
+		{
+			desc:  "queue should not be full",
+			input: []rune{'1', '2', 'a', 'b'},
+			size:  5,
+			want:  false,
+		},
+		{
+			desc:  "queue should be full",
+			input: []rune{'1'},
+			size:  1,
+			want:  true,
+		},
+	}
 
-		_, err := q.Dequeue()
+	for _, tc := range tt {
+		t.Run(tc.desc, func(t *testing.T) {
+			q := queue.New[rune](tc.size)
 
-		assertError(t, queue.EOQ, err)
-	})
+			for _, in := range tc.input {
+				q.Enqueue(in)
+			}
+
+			assertBool(t, q.IsFull() != tc.want, fmt.Sprintf("want %t, got %t", tc.want, q.IsFull()))
+		})
+	}
 }
 
 func assertError(t testing.TB, want, got error) {
