@@ -35,16 +35,18 @@ func (q *queue[V]) Enqueue(v V) {
 }
 
 func (q *queue[V]) Dequeue() (V, error) {
+	defer func() {
+		if q.front == nil {
+			q.back = q.front
+		}
+	}()
+
 	if q.front == nil {
 		return *new(V), EOQ
 	}
 
 	value := q.front.value
 	q.front = q.front.next
-
-	if q.front == nil {
-		q.back = nil
-	}
 
 	return value, nil
 }
