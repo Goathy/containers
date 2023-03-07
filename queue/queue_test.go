@@ -10,13 +10,62 @@ import (
 
 func TestQueue(t *testing.T) {
 	t.Run("should create stack instance", func(t *testing.T) {
-		q := queue.New[any](0)
+		q, err := queue.New[any](0)
+
+		assertBool(t, err != nil, "unexpected error")
 
 		assertBool(t, q == nil, "queue should not be nil")
 	})
 
+	t.Run("should return error if size is less then -1", func(t *testing.T) {
+		q, err := queue.New[int](-2)
+
+		assertError(t, queue.ErrNegativeSize, err)
+
+		assertBool(t, q != nil, "queue should be nil")
+
+	})
+
+	t.Run("should create queue without size when -1 is provided", func(t *testing.T) {
+		q, err := queue.New[float64](-1)
+
+		assertBool(t, err != nil, "unexpected error")
+
+		input := []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+
+		for _, in := range input {
+			q.Enqueue(in)
+		}
+
+		want := false
+
+		assertValue(t, q.IsFull(), want)
+	})
+
+	t.Run("should return error if enqueue beyond queue size", func(t *testing.T) {
+		q, err := queue.New[uint16](9)
+
+		assertBool(t, err != nil, "unexpected error")
+
+		input := []uint16{1, 2, 3, 4, 5, 6, 7, 8, 9}
+
+		for _, in := range input {
+			q.Enqueue(in)
+		}
+
+		err = q.Enqueue(10)
+
+		assertError(t, queue.ErrOverflow, err)
+
+		want := true
+
+		assertValue(t, q.IsFull(), want)
+	})
+
 	t.Run("should insert items into queue", func(t *testing.T) {
-		q := queue.New[int](5)
+		q, err := queue.New[int](5)
+
+		assertBool(t, err != nil, "unexpected error")
 
 		input := []int{1, 2, 3, 4, 5}
 
@@ -26,7 +75,9 @@ func TestQueue(t *testing.T) {
 	})
 
 	t.Run("should remove items from queue", func(t *testing.T) {
-		q := queue.New[string](5)
+		q, err := queue.New[string](5)
+
+		assertBool(t, err != nil, "unexpected error")
 
 		input := []string{"a", "b", "c", "d", "e"}
 
@@ -50,9 +101,11 @@ func TestQueue(t *testing.T) {
 	})
 
 	t.Run("should return error if dequeue from empty queue", func(t *testing.T) {
-		q := queue.New[float32](10)
+		q, err := queue.New[float32](10)
 
-		_, err := q.Dequeue()
+		assertBool(t, err != nil, "unexpected error")
+
+		_, err = q.Dequeue()
 
 		assertError(t, queue.EOQ, err)
 	})
@@ -79,7 +132,9 @@ func TestIsEmpty(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.desc, func(t *testing.T) {
-			q := queue.New[string](3)
+			q, err := queue.New[string](3)
+
+			assertBool(t, err != nil, "unexpected error")
 
 			for _, in := range tc.input {
 				q.Enqueue(in)
@@ -113,7 +168,9 @@ func TestIsFull(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.desc, func(t *testing.T) {
-			q := queue.New[rune](tc.size)
+			q, err := queue.New[rune](tc.size)
+
+			assertBool(t, err != nil, "unexpected error")
 
 			for _, in := range tc.input {
 				q.Enqueue(in)
@@ -136,5 +193,13 @@ func assertBool(t testing.TB, got bool, msg string) {
 	t.Helper()
 	if got {
 		t.Error(msg)
+	}
+}
+
+func assertValue(t testing.TB, got any, want any) {
+	t.Helper()
+
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want %q, got %q", want, got)
 	}
 }
