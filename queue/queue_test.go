@@ -112,14 +112,6 @@ func TestIsEmpty(t *testing.T) {
 	}
 }
 
-func assertError(t testing.TB, want, got error) {
-	t.Helper()
-
-	if want.Error() != got.Error() {
-		t.Errorf("want %q, got %q", want, got)
-	}
-}
-
 func assertBool(t testing.TB, got bool, msg string) {
 	t.Helper()
 	if got {
