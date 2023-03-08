@@ -71,3 +71,10 @@ func (q *queue[V]) IsEmpty() bool {
 func (q *queue[V]) IsFull() bool {
 	return q.length == q.size
 }
+
+func (q *queue[V]) Peek() (V, error) {
+	if q.front == nil {
+		return *new(V), EOQ
+	}
+	return q.front.value, nil
+}
