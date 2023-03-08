@@ -10,62 +10,13 @@ import (
 
 func TestQueue(t *testing.T) {
 	t.Run("should create stack instance", func(t *testing.T) {
-		q, err := queue.New[any](0)
-
-		assertBool(t, err != nil, "unexpected error")
+		q := queue.New[any]()
 
 		assertBool(t, q == nil, "queue should not be nil")
 	})
 
-	t.Run("should return error if size is less then -1", func(t *testing.T) {
-		q, err := queue.New[int](-2)
-
-		assertError(t, queue.ErrNegativeSize, err)
-
-		assertBool(t, q != nil, "queue should be nil")
-
-	})
-
-	t.Run("should create queue without size when -1 is provided", func(t *testing.T) {
-		q, err := queue.New[float64](-1)
-
-		assertBool(t, err != nil, "unexpected error")
-
-		input := []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
-
-		for _, in := range input {
-			q.Enqueue(in)
-		}
-
-		want := false
-
-		assertValue(t, q.IsFull(), want)
-	})
-
-	t.Run("should return error if enqueue beyond queue size", func(t *testing.T) {
-		q, err := queue.New[uint16](9)
-
-		assertBool(t, err != nil, "unexpected error")
-
-		input := []uint16{1, 2, 3, 4, 5, 6, 7, 8, 9}
-
-		for _, in := range input {
-			q.Enqueue(in)
-		}
-
-		err = q.Enqueue(10)
-
-		assertError(t, queue.ErrOverflow, err)
-
-		want := true
-
-		assertValue(t, q.IsFull(), want)
-	})
-
 	t.Run("should insert items into queue", func(t *testing.T) {
-		q, err := queue.New[int](5)
-
-		assertBool(t, err != nil, "unexpected error")
+		q := queue.New[int]()
 
 		input := []int{1, 2, 3, 4, 5}
 
@@ -75,9 +26,7 @@ func TestQueue(t *testing.T) {
 	})
 
 	t.Run("should remove items from queue", func(t *testing.T) {
-		q, err := queue.New[string](5)
-
-		assertBool(t, err != nil, "unexpected error")
+		q := queue.New[string]()
 
 		input := []string{"a", "b", "c", "d", "e"}
 
@@ -87,37 +36,13 @@ func TestQueue(t *testing.T) {
 
 		got := make([]string, 0)
 
-		for {
-			v, err := q.Dequeue()
-
-			if err == queue.EOQ {
-				break
-			}
+		for !q.IsEmpty() {
+			v := q.Dequeue()
 
 			got = append(got, v)
 		}
 
 		assertBool(t, !reflect.DeepEqual(got, input), fmt.Sprintf("want %q, got %q", input, got))
-	})
-
-	t.Run("should return error if dequeue from empty queue", func(t *testing.T) {
-		q, err := queue.New[float32](10)
-
-		assertBool(t, err != nil, "unexpected error")
-
-		_, err = q.Dequeue()
-
-		assertError(t, queue.EOQ, err)
-	})
-
-	t.Run("should return err if peak from empty queue", func(t *testing.T) {
-		q, err := queue.New[int](-1)
-
-		assertBool(t, err != nil, "unexpected error")
-
-		_, err = q.Peek()
-
-		assertError(t, queue.EOQ, err)
 	})
 
 	t.Run("should always peek first element from queue", func(t *testing.T) {
@@ -141,15 +66,13 @@ func TestQueue(t *testing.T) {
 
 		for _, tc := range tt {
 			t.Run(tc.desc, func(t *testing.T) {
-				q, err := queue.New[int](-1)
-
-				assertBool(t, err != nil, "unexpected error")
+				q := queue.New[int]()
 
 				for _, in := range tc.input {
 					q.Enqueue(in)
 				}
 
-				got, _ := q.Peek()
+				got := q.Peek()
 
 				assertValue(t, got, tc.want)
 			})
@@ -178,51 +101,13 @@ func TestIsEmpty(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.desc, func(t *testing.T) {
-			q, err := queue.New[string](3)
-
-			assertBool(t, err != nil, "unexpected error")
+			q := queue.New[string]()
 
 			for _, in := range tc.input {
 				q.Enqueue(in)
 			}
 
 			assertBool(t, q.IsEmpty() != tc.want, fmt.Sprintf("want %t, got %t", tc.want, q.IsEmpty()))
-		})
-	}
-}
-
-func TestIsFull(t *testing.T) {
-	tt := []struct {
-		desc  string
-		input []rune
-		size  int64
-		want  bool
-	}{
-		{
-			desc:  "queue should not be full",
-			input: []rune{'1', '2', 'a', 'b'},
-			size:  5,
-			want:  false,
-		},
-		{
-			desc:  "queue should be full",
-			input: []rune{'1'},
-			size:  1,
-			want:  true,
-		},
-	}
-
-	for _, tc := range tt {
-		t.Run(tc.desc, func(t *testing.T) {
-			q, err := queue.New[rune](tc.size)
-
-			assertBool(t, err != nil, "unexpected error")
-
-			for _, in := range tc.input {
-				q.Enqueue(in)
-			}
-
-			assertBool(t, q.IsFull() != tc.want, fmt.Sprintf("want %t, got %t", tc.want, q.IsFull()))
 		})
 	}
 }
