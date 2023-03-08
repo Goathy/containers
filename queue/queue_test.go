@@ -110,6 +110,52 @@ func TestQueue(t *testing.T) {
 		assertError(t, queue.EOQ, err)
 	})
 
+	t.Run("should return err if peak from empty queue", func(t *testing.T) {
+		q, err := queue.New[int](-1)
+
+		assertBool(t, err != nil, "unexpected error")
+
+		_, err = q.Peek()
+
+		assertError(t, queue.EOQ, err)
+	})
+
+	t.Run("should always peek first element from queue", func(t *testing.T) {
+
+		tt := []struct {
+			desc  string
+			input []int
+			want  int
+		}{
+			{
+				desc:  "should pick 1",
+				input: []int{1, 2, 3, 4, 5},
+				want:  1,
+			},
+			{
+				desc:  "should pick 10",
+				input: []int{10},
+				want:  10,
+			},
+		}
+
+		for _, tc := range tt {
+			t.Run(tc.desc, func(t *testing.T) {
+				q, err := queue.New[int](-1)
+
+				assertBool(t, err != nil, "unexpected error")
+
+				for _, in := range tc.input {
+					q.Enqueue(in)
+				}
+
+				got, _ := q.Peek()
+
+				assertValue(t, got, tc.want)
+			})
+		}
+
+	})
 }
 
 func TestIsEmpty(t *testing.T) {
