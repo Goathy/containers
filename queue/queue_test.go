@@ -24,6 +24,14 @@ func TestEnqueue(t *testing.T) {
 	}
 }
 
+func TestDequeueOnEmpty(t *testing.T) {
+	q := queue.New[any]()
+
+	value := q.Dequeue()
+
+	assertValue(t, value, nil)
+}
+
 func TestDequeue(t *testing.T) {
 	q := queue.New[string]()
 
