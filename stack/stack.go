@@ -38,5 +38,9 @@ func (s *stack[V]) Pop() V {
 }
 
 func (s *stack[V]) Peek() V {
+	if s.top == nil {
+		return *new(V)
+	}
+
 	return s.top.value
 }

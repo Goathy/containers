@@ -51,6 +51,14 @@ func TestPop(t *testing.T) {
 	assertBool(t, !reflect.DeepEqual(got, want), fmt.Sprintf("want %q, got %q", want, got))
 }
 
+func TestPeekOnEmpty(t *testing.T) {
+	s := stack.New[any]()
+
+	value := s.Peek()
+
+	assertValue(t, value, nil)
+}
+
 func TestPeek(t *testing.T) {
 	tt := []struct {
 		desc  string
