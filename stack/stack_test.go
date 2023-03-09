@@ -24,6 +24,14 @@ func TestPush(t *testing.T) {
 	}
 }
 
+func TestPopOnEmpty(t *testing.T) {
+	s := stack.New[any]()
+
+	value := s.Pop()
+
+	assertValue(t, value, nil)
+}
+
 func TestPop(t *testing.T) {
 	s := stack.New[string]()
 
