@@ -52,6 +52,14 @@ func TestDequeue(t *testing.T) {
 	assertBool(t, !reflect.DeepEqual(got, input), fmt.Sprintf("want %q, got %q", input, got))
 }
 
+func TestPeekOnEmpty(t *testing.T) {
+	q := queue.New[any]()
+
+	value := q.Peek()
+
+	assertValue(t, value, nil)
+}
+
 func TestPeek(t *testing.T) {
 	tt := []struct {
 		desc  string
