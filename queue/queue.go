@@ -25,6 +25,10 @@ func (q *queue[V]) Enqueue(v V) {
 }
 
 func (q *queue[V]) Dequeue() V {
+	if q.front == nil {
+		return *new(V)
+	}
+
 	value := q.front.value
 	q.front = q.front.next
 
