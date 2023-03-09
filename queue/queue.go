@@ -44,5 +44,9 @@ func (q *queue[V]) IsEmpty() bool {
 }
 
 func (q *queue[V]) Peek() V {
+	if q.front == nil {
+		return *new(V)
+	}
+
 	return q.front.value
 }
