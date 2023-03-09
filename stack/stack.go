@@ -27,6 +27,10 @@ func (s *stack[V]) Push(v V) {
 }
 
 func (s *stack[V]) Pop() V {
+	if s.top == nil {
+		return *new(V)
+	}
+
 	value := s.top.value
 	s.top = s.top.prev
 
