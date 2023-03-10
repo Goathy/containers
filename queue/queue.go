@@ -26,7 +26,9 @@ func (q *queue[V]) Enqueue(v V) {
 
 func (q *queue[V]) Dequeue() V {
 	if q.front == nil {
-		return *new(V)
+		var value V
+
+		return value
 	}
 
 	value := q.front.value
@@ -45,7 +47,9 @@ func (q *queue[V]) IsEmpty() bool {
 
 func (q *queue[V]) Peek() V {
 	if q.front == nil {
-		return *new(V)
+		var value V
+
+		return value
 	}
 
 	return q.front.value
