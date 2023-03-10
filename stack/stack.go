@@ -28,7 +28,9 @@ func (s *stack[V]) Push(v V) {
 
 func (s *stack[V]) Pop() V {
 	if s.top == nil {
-		return *new(V)
+		var value V
+
+		return value
 	}
 
 	value := s.top.value
@@ -39,7 +41,9 @@ func (s *stack[V]) Pop() V {
 
 func (s *stack[V]) Peek() V {
 	if s.top == nil {
-		return *new(V)
+		var value V
+
+		return value
 	}
 
 	return s.top.value
