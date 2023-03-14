@@ -1,5 +1,7 @@
 package list
 
+import "reflect"
+
 type node[V any] struct {
 	value V
 	next  *node[V]
@@ -23,4 +25,20 @@ func (l *list[V]) Insert(v V) {
 
 	l.tail.next = &node[V]{value: v, next: nil}
 	l.tail = l.tail.next
+}
+
+func (l *list[V]) Search(v V) V {
+	if l.head == nil {
+		var value V
+		return value
+	}
+
+	n := l.head
+
+	for n != nil && !reflect.DeepEqual(n.value, v) {
+		n = n.next
+	}
+
+	return n.value
+
 }
