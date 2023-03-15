@@ -46,6 +46,29 @@ func TestSearch(t *testing.T) {
 	assertValue(t, got, want)
 }
 
+func TestDeleteOnEmpty(t *testing.T) {
+	l := list.New[int]()
+
+	l.Delete(10)
+}
+
+func TestDelete(t *testing.T) {
+	l := list.New[string]()
+
+	input := []string{"a", "b", "c", "d", "e"}
+
+	for _, in := range input {
+		l.Insert(in)
+	}
+
+	l.Delete("c")
+
+	got := l.Search("c")
+	want := ""
+
+	assertValue(t, got, want)
+}
+
 func assertBool(t testing.TB, got bool, msg string) {
 	t.Helper()
 	if got {
