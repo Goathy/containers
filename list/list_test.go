@@ -69,6 +69,18 @@ func TestDelete(t *testing.T) {
 	assertValue(t, got, want)
 }
 
+func TestDeleteOutsideRangeFromNotEmptyList(t *testing.T) {
+	l := list.New[string]()
+
+	input := []string{"a", "b", "c", "d", "e"}
+
+	for _, in := range input {
+		l.Insert(in)
+	}
+
+	l.Delete("f")
+}
+
 func assertBool(t testing.TB, got bool, msg string) {
 	t.Helper()
 	if got {
