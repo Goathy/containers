@@ -54,6 +54,11 @@ func (l *list[V]) Delete(v V) {
 
 	n := l.head
 
+	if reflect.DeepEqual(n.value, v) {
+		l.head = n.next
+		return
+	}
+
 	for n.next != nil && !reflect.DeepEqual(n.next.value, v) {
 		n = n.next
 	}
