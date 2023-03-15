@@ -39,6 +39,23 @@ func (l *list[V]) Search(v V) V {
 		n = n.next
 	}
 
-	return n.value
+	if n == nil {
+		var value V
+		return value
+	}
 
+	return n.value
+}
+
+func (l *list[V]) Delete(v V) {
+	if l.head == nil {
+		return
+	}
+
+	n := l.head
+
+	for n.next != nil && !reflect.DeepEqual(n.next.value, v) {
+		n = n.next
+	}
+	n.next = n.next.next
 }
