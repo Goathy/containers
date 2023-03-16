@@ -48,6 +48,12 @@ func (l *list[V]) Search(v V) V {
 }
 
 func (l *list[V]) Delete(v V) {
+	defer func() {
+		if l.head == nil {
+			l.tail = nil
+		}
+	}()
+
 	if l.head == nil {
 		return
 	}
@@ -56,6 +62,7 @@ func (l *list[V]) Delete(v V) {
 
 	if reflect.DeepEqual(n.value, v) {
 		l.head = n.next
+
 		return
 	}
 

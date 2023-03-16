@@ -98,6 +98,49 @@ func TestDeleteOnFirstElement(t *testing.T) {
 	assertValue(t, got, want)
 }
 
+func TestDeleteAllElements(t *testing.T) {
+	l := list.New[string]()
+
+	input := []string{"a", "b", "c", "d", "e"}
+
+	for _, in := range input {
+		l.Insert(in)
+	}
+
+	for _, in := range input {
+		l.Delete(in)
+	}
+
+	want := ""
+
+	for _, in := range input {
+		got := l.Search(in)
+		assertValue(t, got, want)
+	}
+
+}
+
+func TestDeleteAllElementsInReverseOrder(t *testing.T) {
+	l := list.New[string]()
+
+	input := []string{"a", "b", "c", "d", "e"}
+
+	for _, in := range input {
+		l.Insert(in)
+	}
+
+	for i := len(input) - 1; i >= 0; i-- {
+		l.Delete(string(input[i]))
+	}
+
+	want := ""
+
+	for _, in := range input {
+		got := l.Search(in)
+		assertValue(t, got, want)
+	}
+}
+
 func assertBool(t testing.TB, got bool, msg string) {
 	t.Helper()
 	if got {
