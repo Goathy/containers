@@ -3,8 +3,15 @@ package list
 import "reflect"
 
 type node[V any] struct {
-	value V
+	Value V
 	next  *node[V]
+}
+
+func (n *node[V]) Next() *node[V] {
+	if p := n.next; p != nil {
+		return p
+	}
+	return nil
 }
 
 type list[V any] struct {
@@ -18,12 +25,12 @@ func New[V any]() *list[V] {
 
 func (l *list[V]) Insert(v V) {
 	if l.head == nil {
-		l.head = &node[V]{value: v, next: nil}
+		l.head = &node[V]{Value: v, next: nil}
 		l.tail = l.head
 		return
 	}
 
-	l.tail.next = &node[V]{value: v, next: nil}
+	l.tail.next = &node[V]{Value: v, next: nil}
 	l.tail = l.tail.next
 }
 
@@ -35,7 +42,7 @@ func (l *list[V]) Search(v V) V {
 
 	n := l.head
 
-	for n != nil && !reflect.DeepEqual(n.value, v) {
+	for n != nil && !reflect.DeepEqual(n.Value, v) {
 		n = n.next
 	}
 
@@ -44,7 +51,7 @@ func (l *list[V]) Search(v V) V {
 		return value
 	}
 
-	return n.value
+	return n.Value
 }
 
 func (l *list[V]) Delete(v V) {
@@ -60,13 +67,13 @@ func (l *list[V]) Delete(v V) {
 
 	n := l.head
 
-	if reflect.DeepEqual(n.value, v) {
+	if reflect.DeepEqual(n.Value, v) {
 		l.head = n.next
 
 		return
 	}
 
-	for n.next != nil && !reflect.DeepEqual(n.next.value, v) {
+	for n.next != nil && !reflect.DeepEqual(n.next.Value, v) {
 		n = n.next
 	}
 
@@ -75,4 +82,12 @@ func (l *list[V]) Delete(v V) {
 	}
 
 	n.next = n.next.next
+}
+
+func (l *list[V]) Traverse() *node[V] {
+	if l.head == nil {
+		return nil
+	}
+
+	return l.head
 }
