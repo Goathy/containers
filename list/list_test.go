@@ -141,6 +141,23 @@ func TestDeleteAllElementsInReverseOrder(t *testing.T) {
 	}
 }
 
+func TestTraverse(t *testing.T) {
+	l := list.New[string]()
+
+	input := []string{"a", "b", "c", "d", "e"}
+
+	for _, in := range input {
+		l.Insert(in)
+	}
+
+	var i int
+	for n := l.Traverse(); n != nil; n = n.Next() {
+		assertValue(t, n.Value, input[i])
+		i++
+	}
+
+}
+
 func assertBool(t testing.TB, got bool, msg string) {
 	t.Helper()
 	if got {
