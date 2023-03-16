@@ -15,8 +15,7 @@ func (n *node[V]) Next() *node[V] {
 }
 
 type list[V any] struct {
-	head *node[V]
-	tail *node[V]
+	head, tail *node[V]
 }
 
 func New[V any]() *list[V] {
@@ -35,23 +34,19 @@ func (l *list[V]) Insert(v V) {
 }
 
 func (l *list[V]) Search(v V) V {
+	var zeroValue V
+
 	if l.head == nil {
-		var value V
-		return value
+		return zeroValue
 	}
 
-	n := l.head
-
-	for n != nil && !reflect.DeepEqual(n.Value, v) {
-		n = n.next
+	for n := l.Traverse(); n != nil; n = n.Next() {
+		if reflect.DeepEqual(n.Value, v) {
+			return n.Value
+		}
 	}
 
-	if n == nil {
-		var value V
-		return value
-	}
-
-	return n.Value
+	return zeroValue
 }
 
 func (l *list[V]) Delete(v V) {
@@ -65,16 +60,14 @@ func (l *list[V]) Delete(v V) {
 		return
 	}
 
-	n := l.head
-
-	if reflect.DeepEqual(n.Value, v) {
-		l.head = n.next
-
+	if reflect.DeepEqual(l.head.Value, v) {
+		l.head = l.head.next
 		return
 	}
 
-	for n.next != nil && !reflect.DeepEqual(n.next.Value, v) {
-		n = n.next
+	var n *node[V]
+
+	for n = l.Traverse(); n.next != nil && !reflect.DeepEqual(n.next.Value, v); n = n.Next() {
 	}
 
 	if n.next == nil {
